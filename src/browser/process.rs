@@ -112,7 +112,10 @@ pub struct LaunchOptions<'a> {
 
     /// Disable default arguments
     #[builder(default)]
-    pub disable_default_args: bool,    
+    pub disable_default_args: bool,
+
+    #[builder(default)]
+    pub enable_audio_output: bool,
 
     /// The options to use for fetching a version of chrome when `path` is None.
     ///
@@ -150,6 +153,7 @@ impl<'a> Default for LaunchOptions<'a> {
             fetcher_options: Default::default(),
             args: Vec::new(),
             disable_default_args: false,
+            enable_audio_output: false,
         }
     }
 }
@@ -283,9 +287,12 @@ impl Process {
             "--verbose",
             "--log-level=0",
             "--no-first-run",
-            "--disable-audio-output",
             data_dir_option.as_str(),
         ];
+
+        if !launch_options.enable_audio_output {
+            args.extend(&["--disable-audio-output"]);
+        }
 
         if !launch_options.disable_default_args {
             args.extend(&DEFAULT_ARGS);
